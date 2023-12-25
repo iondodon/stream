@@ -9,9 +9,22 @@ func main() {
 	list := []int{1, 2, 3}
 
 	list, err := ToStream(list).
-		Filter(even).
-		Apply(multiplyTo10).
-		Peek(printToConsole).
+		Filter(func(e int) (bool, error) {
+			if e%2 == 0 {
+				return true, nil
+			}
+			return false, nil
+		}).
+		Apply(func(i int) (int, error) {
+			return i * 10, nil
+		}).
+		Apply(func(i int) (int, error) {
+			return i + 1, nil
+		}).
+		Peek(func(e int) error {
+			fmt.Print(e, " ")
+			return nil
+		}).
 		ToSlice()
 
 	if err != nil {
@@ -19,20 +32,4 @@ func main() {
 	}
 
 	fmt.Println("\nResulting slice:", list)
-}
-
-func multiplyTo10(i int) (int, error) {
-	return i * 10, nil
-}
-
-func printToConsole(e int) error {
-	fmt.Print(e, " ")
-	return nil
-}
-
-func even(e int) (bool, error) {
-	if e%2 == 0 {
-		return true, nil
-	}
-	return false, nil
 }
