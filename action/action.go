@@ -1,15 +1,15 @@
 package action
 
-type ActionType string
+type Type uint
 
 const (
-	FilterAction = "filter"
-	PeekAction   = "peek"
-	ApplyAction  = "apply"
+	FilterAction Type = iota
+	PeekAction
+	ApplyAction
 )
 
 type Action[T any] struct {
-	ActionType string
+	ActionType Type
 }
 
 type Peeker[T any] interface {
