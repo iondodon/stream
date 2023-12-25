@@ -39,12 +39,15 @@ func (s *Stream[T]) Apply(functionFunc FunctionFunc[T]) *Stream[T] {
 
 func (s *Stream[T]) ToSlice() []T {
 	for _, a := range s.actions {
-		if a.ActionType == PeekAction {
+		switch a.ActionType {
+		case PeekAction:
 			s.doPeek()
-		} else if a.ActionType == FilterAction {
+		case FilterAction:
 			s.doFilter()
-		} else if a.ActionType == ApplyAction {
+		case ApplyAction:
 			s.doApply()
+		default:
+			panic("unrecognized action")
 		}
 	}
 	return s.collection
