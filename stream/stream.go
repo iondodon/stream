@@ -83,7 +83,7 @@ func (s *Stream[T]) doFilter() {
 		for _, elem := range s.collection {
 			filtered, err := f.Filter(elem)
 			if err != nil {
-				s.err = fmt.Errorf("%w: %w", err, s.err)
+				s.err = err
 				break
 			}
 			if filtered {
