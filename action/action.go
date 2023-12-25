@@ -3,8 +3,9 @@ package action
 type ActionType string
 
 const (
-	ActionFilter = "filter"
-	ActionPeek   = "peek"
+	FilterAction = "filter"
+	PeekAction   = "peek"
+	ApplyAction  = "apply"
 )
 
 type Action[T any] struct {
@@ -19,8 +20,13 @@ type Filter[T any] interface {
 	Filter(elem T) bool
 }
 
+type Applier[T any] interface {
+	Apply(elem T) T
+}
+
 type ConsumerFunc[T any] func(T)
 type PredicateFunc[T any] func(T) bool
+type FunctionFunc[T any] func(T) T
 
 func (cf ConsumerFunc[T]) Peek(elem T) {
 	cf(elem)
@@ -28,4 +34,8 @@ func (cf ConsumerFunc[T]) Peek(elem T) {
 
 func (pf PredicateFunc[T]) Filter(elem T) bool {
 	return pf(elem)
+}
+
+func (ff FunctionFunc[T]) Apply(elem T) T {
+	return ff(elem)
 }
