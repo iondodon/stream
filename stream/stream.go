@@ -29,6 +29,7 @@ func (s *Stream[T]) Peek(consumerFunc ConsumerFunc[T]) *Stream[T] {
 
 	s.actions = append(s.actions, Action[T]{ActionType: PeekAction})
 	s.peekers = append(s.peekers, consumerFunc)
+
 	return s
 }
 
@@ -39,6 +40,7 @@ func (s *Stream[T]) Filter(filterFunc PredicateFunc[T]) *Stream[T] {
 
 	s.actions = append(s.actions, Action[T]{ActionType: FilterAction})
 	s.filters = append(s.filters, filterFunc)
+
 	return s
 }
 
@@ -49,6 +51,7 @@ func (s *Stream[T]) Apply(functionFunc FunctionFunc[T]) *Stream[T] {
 
 	s.actions = append(s.actions, Action[T]{ActionType: ApplyAction})
 	s.appliers = append(s.appliers, functionFunc)
+
 	return s
 }
 
@@ -70,7 +73,7 @@ func (s *Stream[T]) ToSlice() ([]T, error) {
 		}
 	}
 
-	return s.collection, nil
+	return s.collection, s.err
 }
 
 func (s *Stream[T]) doFilter() {
