@@ -1,7 +1,6 @@
 package stream
 
 import (
-	"fmt"
 	. "github.com/iondodon/stream/action"
 )
 
@@ -84,7 +83,7 @@ func (s *Stream[T]) doFilter() {
 			filtered, err := f.Filter(elem)
 			if err != nil {
 				s.err = err
-				break
+				return
 			}
 			if filtered {
 				res = append(res, elem)
@@ -100,8 +99,8 @@ func (s *Stream[T]) doPeek() {
 		for _, elem := range s.collection {
 			err := p.Peek(elem)
 			if err != nil {
-				s.err = fmt.Errorf("%w: %w", err, s.err)
-				break
+				s.err = err
+				return
 			}
 		}
 	}
@@ -113,8 +112,8 @@ func (s *Stream[T]) doApply() {
 		for index, _ := range s.collection {
 			res, err := a.Apply(s.collection[index])
 			if err != nil {
-				s.err = fmt.Errorf("%w: %w", err, s.err)
-				break
+				s.err = err
+				return
 			}
 			s.collection[index] = res
 		}
