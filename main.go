@@ -1,35 +1,34 @@
 package main
 
-import (
-	"fmt"
-	. "github.com/iondodon/stream/stream"
-)
+import "fmt"
 
-func main() {
-	list := []int{1, 2, 3}
+type StreamedSlice[T any] []T
 
-	list, err := ToStream(list).
-		Filter(func(e int) (bool, error) {
-			if e%2 == 0 {
-				return true, nil
-			}
-			return false, nil
-		}).
-		Apply(func(i int) (int, error) {
-			return i * 10, nil
-		}).
-		Apply(func(i int) (int, error) {
-			return i + 1, nil
-		}).
-		Peek(func(e int) error {
-			fmt.Print(e, " ")
-			return nil
-		}).
-		ToSlice()
+type FunctionFunc[T any, R any] func(T) R
 
-	if err != nil {
-		fmt.Println(err)
+type R any
+
+func (ss StreamedSlice[T]) trans(functionFunc FunctionFunc[T, R]) StreamedSlice[R] {
+	var newSlice = make(StreamedSlice[R], 0)
+
+	for _, elem := range ss {
+		res := functionFunc(elem)
+		newSlice = append(newSlice, res)
 	}
 
-	fmt.Println("\nResulting slice:", list)
+	return newSlice
+}
+
+func (ss StreamedSlice[T]) collect() StreamedSlice[T] {
+	return ss
+}
+
+func main() {
+	s := StreamedSlice[int]([]int{1, 2, 3})
+
+	res := s.trans(func(i int) R {
+		return 2.21 + float32(i)
+	}).collect()
+
+	fmt.Println(res)
 }
