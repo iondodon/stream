@@ -13,29 +13,29 @@ type Action[T any] struct {
 }
 
 type Peeker[T any] interface {
-	Peek(elem T)
+	Peek(elem T) error
 }
 
 type Filter[T any] interface {
-	Filter(elem T) bool
+	Filter(elem T) (bool, error)
 }
 
 type Applier[T any] interface {
-	Apply(elem T) T
+	Apply(elem T) (T, error)
 }
 
-type ConsumerFunc[T any] func(T)
-type PredicateFunc[T any] func(T) bool
-type FunctionFunc[T any] func(T) T
+type ConsumerFunc[T any] func(T) error
+type PredicateFunc[T any] func(T) (bool, error)
+type FunctionFunc[T any] func(T) (T, error)
 
-func (cf ConsumerFunc[T]) Peek(elem T) {
-	cf(elem)
+func (cf ConsumerFunc[T]) Peek(elem T) error {
+	return cf(elem)
 }
 
-func (pf PredicateFunc[T]) Filter(elem T) bool {
+func (pf PredicateFunc[T]) Filter(elem T) (bool, error) {
 	return pf(elem)
 }
 
-func (ff FunctionFunc[T]) Apply(elem T) T {
+func (ff FunctionFunc[T]) Apply(elem T) (T, error) {
 	return ff(elem)
 }
